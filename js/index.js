@@ -95,10 +95,6 @@ function drawConnections() {
             var angle = Math.atan2(i, j);
             if (angle < 0) angle += 2 * Math.PI;
             angle *= 1.1;
-            var RGB = HSVtoRGB(angle, 0.6, 1);
-            if (isNaN(RGB)) console.log(i, j, angle);
-            // console.log(RGB);
-            // if (isNaN(RGB.r)) console.log(angle);
 
             var complex = new Complex(i, j);
             var squared = complex.pow(2);
@@ -106,6 +102,11 @@ function drawConnections() {
             var line = new THREE.Geometry();
             line.vertices.push(new THREE.Vector3(i, y, j));
             line.vertices.push(new THREE.Vector3(squared.re * scaler, -y, squared.im * scaler));
+
+            var sat = Math.sqrt(Math.pow(i - squared.re, 2) + Math.pow(j - squared.im, 2)) / 20;
+            console.log(sat);
+            var RGB = HSVtoRGB(angle, sig(sat), 1);
+
             makeLine(line, RGB, 10);
         }
     }
@@ -175,4 +176,8 @@ function HSVtoRGB(h, s, v) {
     g = Math.round(g * 255);
     b = Math.round(b * 255);
     return r * 16 * 16 * 16 * 16 + g * 16 * 16 + b;
+}
+// sigmoid
+function sig(x) {
+    return 1 / (1 + Math.pow(Math.E, -x));
 }
